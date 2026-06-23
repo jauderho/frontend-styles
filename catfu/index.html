@@ -9,7 +9,7 @@
 (function(){
   try{
     var s=localStorage.getItem('cobalt-theme');
-    if(!s){ s=(window.matchMedia&&window.matchMedia('(prefers-color-scheme:light)').matches)?'light':'dark'; }
+    if(!s){ s='dark'; }
     document.documentElement.setAttribute('data-theme',s);
   }catch(e){ document.documentElement.setAttribute('data-theme','dark'); }
 })();
