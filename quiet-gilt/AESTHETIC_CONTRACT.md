@@ -1,4 +1,4 @@
-# AESTHETIC_CONTRACT.md
+# AESTHETIC_CONTRACT.md - "Quiet Gilt"
 
 > **Purpose.** This is a binding design contract for every app in this repo. You (the implementing model — Claude, Codex, or otherwise) did not author the visual direction — it is fixed here and already shipped across all six apps. Your job is to produce UI that looks as if it came from a single, opinionated senior designer. Do not improvise the aesthetic. Do not "improve" the palette. Follow the rules; deviate only where this document explicitly grants latitude.
 >
