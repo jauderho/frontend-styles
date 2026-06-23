@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Quiet Gilt — A private wealth house</title>
+<meta name="description" content="For three generations, Quiet Gilt has stewarded the fortunes of families who measure success in decades, not quarters. By introduction only." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Hanken+Grotesk:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   QUIET GILT  ·  tokens are the single source of truth (§3)
+   Dark is default; light is a first-class equal.
+   ============================================================ */
+:root[data-theme="dark"]{
+  --bg:#0a0b0d; --surface:#15181d; --surface2:#1b1f26;
+  --border:#262b34; --border2:#333a45;
+  --text:#f4f3f0; --text2:#b9bcc4; --text3:#7e8390; --tick:#a8aeb8;
+  --gold:#d4b87a; --gold-bg:rgba(212,184,122,.10); --on-gold:#1a1408;
+  --good:#5ed6a4; --danger:#ff6b6b;
+  --clay:#c98a6b; --taupe:#a89a7e;
+  --grid:rgba(212,184,122,.10);
+  --halo:#15181d;
+  --grain:.035;
+}
+:root[data-theme="light"]{
+  --bg:#f7f4ee; --surface:#ffffff; --surface2:#f3efe6;
+  --border:#e2dccf; --border2:#d4ccbb;
+  --text:#1a1814; --text2:#4b4742; --text3:#857f74; --tick:#6b6560;
+  --gold:#9a7b2e; --gold-bg:rgba(154,123,46,.09); --on-gold:#ffffff;
+  --good:#1f8a5b; --danger:#c0392b;
+  --clay:#a05a38; --taupe:#a89a7e;
+  --grid:rgba(130,108,56,.12);
+  --halo:#ffffff;
+  --grain:.025;
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+@media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } }
+
+body{
+  font-family:'Hanken Grotesk','Noto Sans TC',ui-sans-serif,system-ui,sans-serif;
+  background:var(--bg); color:var(--text);
+  line-height:1.6; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  transition:background .4s ease, color .4s ease;
+}
+:lang(zh){ font-family:'Noto Sans TC',ui-sans-serif,system-ui,sans-serif; }
+
+.serif{ font-family:'Newsreader','Noto Serif TC',serif; }
+.tnum{ font-variant-numeric:tabular-nums; }
+
+::selection{ background:var(--gold-bg); color:var(--text); }
+
+:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; border-radius:3px; }
+
+/* ============ ATMOSPHERE (token hairlines + engraving, no decorative gradients) ============ */
+.engrave{ position:fixed; inset:0; z-index:-2; pointer-events:none; overflow:hidden; }
+.engrave svg{ position:absolute; }
+#rosette{ top:-26vmin; right:-22vmin; width:88vmin; height:88vmin; opacity:.5; }
+#rosette path{ fill:none; stroke:var(--gold); stroke-width:.4; opacity:.22; }
+.grain{
+  position:fixed; inset:0; z-index:60; pointer-events:none;
+  opacity:var(--grain); mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ============ LAYOUT ============ */
+.wrap{ width:min(1180px, 90vw); margin-inline:auto; }
+section{ position:relative; }
+.rule{ height:1px; background:var(--border); width:100%; }
+.rule-gold{ height:1px; background:var(--gold); opacity:.4; }
+
+.eyebrow{
+  font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--gold); display:inline-flex; align-items:center; gap:.75em;
+}
+.eyebrow::before{ content:""; width:22px; height:1px; background:var(--gold); opacity:.7; }
+.eyebrow.center::after{ content:""; width:22px; height:1px; background:var(--gold); opacity:.7; }
+
+/* ============ NAV ============ */
+nav{
+  position:fixed; top:0; left:0; right:0; z-index:40;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.15rem clamp(1.25rem,5vw,3.4rem);
+  border-bottom:1px solid transparent;
+  transition:background .4s ease, border-color .4s ease, padding .4s ease;
+}
+nav.shrink{
+  background:color-mix(in srgb, var(--bg) 80%, transparent);
+  backdrop-filter:blur(14px) saturate(1.1);
+  border-bottom:1px solid var(--border);
+  padding-block:.85rem;
+}
+.brand{
+  font-family:'Newsreader','Noto Serif TC',serif; font-weight:500; font-size:1.18rem;
+  letter-spacing:.34em; padding-left:.34em; color:var(--text); text-decoration:none;
+  display:inline-flex; align-items:center; gap:.6em;
+}
+.brand .mark{ width:9px; height:9px; border:1px solid var(--gold); transform:rotate(45deg); display:inline-block; }
+.brand .mark::after{ content:""; display:block; width:3px; height:3px; background:var(--gold); margin:2px; }
+.navlinks{ display:flex; align-items:center; gap:clamp(1.2rem,2.4vw,2.2rem); }
+.navlinks a.lnk{
+  color:var(--text2); text-decoration:none; font-size:.83rem; letter-spacing:.02em;
+  position:relative; transition:color .25s ease; padding:.4rem 0;
+}
+.navlinks a.lnk::after{
+  content:""; position:absolute; left:0; bottom:0; width:0; height:1px; background:var(--gold);
+  transition:width .3s cubic-bezier(.16,1,.3,1);
+}
+.navlinks a.lnk:hover{ color:var(--text); }
+.navlinks a.lnk:hover::after{ width:100%; }
+
+.iconbtn{
+  display:inline-grid; place-items:center; width:44px; height:44px;
+  background:transparent; border:1px solid var(--border); border-radius:10px;
+  color:var(--text2); cursor:pointer; transition:.2s ease;
+}
+.iconbtn:hover{ color:var(--gold); border-color:var(--border2); background:var(--surface2); }
+.iconbtn svg{ width:18px; height:18px; }
+.langbtn{
+  font:inherit; font-size:.74rem; font-weight:700; letter-spacing:.1em;
+  min-width:48px; height:44px; padding:0 .7rem;
+  background:transparent; border:1px solid var(--border); border-radius:10px;
+  color:var(--text2); cursor:pointer; transition:.2s ease;
+}
+.langbtn:hover{ color:var(--gold); border-color:var(--border2); background:var(--surface2); }
+
+.btn{
+  font:inherit; font-size:.78rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+  text-decoration:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:.6em;
+  min-height:44px; padding:0 1.5rem; border-radius:11px; box-sizing:border-box;
+  transition:transform .28s cubic-bezier(.16,1,.3,1), background .25s ease, color .25s ease, border-color .25s ease, box-shadow .28s ease;
+}
+.btn-gold{ background:var(--gold); color:var(--on-gold); border:1px solid var(--gold); }
+.btn-gold:hover{ transform:translateY(-2px); box-shadow:0 14px 34px -16px color-mix(in srgb, var(--gold) 80%, transparent); }
+.btn-ghost{ background:transparent; color:var(--text); border:1px solid var(--border2); }
+.btn-ghost:hover{ border-color:var(--gold); color:var(--gold); }
+.nav-cta{ display:inline-flex; }
+
+.menutog{ display:none; }
+
+/* ============ HERO ============ */
+.hero{ padding:11rem 0 5.5rem; }
+.hero-grid{ display:grid; grid-template-columns:1.15fr .85fr; gap:clamp(2rem,5vw,4.5rem); align-items:end; }
+.hero h1{
+  font-family:'Newsreader','Noto Serif TC',serif; font-weight:500;
+  font-size:clamp(2.9rem,8vw,6.2rem); line-height:1.02; letter-spacing:-.015em;
+  margin:1.4rem 0 1.6rem;
+}
+.hero h1 em{ font-style:italic; color:var(--gold); }
+.hero .lead{ font-size:clamp(1rem,1.4vw,1.12rem); color:var(--text2); max-width:46ch; }
+.hero-cta{ display:flex; flex-wrap:wrap; gap:.85rem; margin-top:2.2rem; }
+
+/* HeroInsight card (§7) */
+.hero-card{
+  background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--gold);
+  border-radius:15px; padding:1.6rem 1.7rem;
+  box-shadow:0 30px 60px -40px rgba(0,0,0,.55);
+}
+.hero-card .eyebrow{ font-size:10.5px; }
+.hero-num{
+  font-family:'Newsreader','Noto Serif TC',serif; font-weight:500;
+  font-size:clamp(3rem,6.6vw,4.6rem); line-height:1.15; letter-spacing:-.01em;
+  margin:.55rem 0 .35rem; display:inline-flex; color:var(--text);
+}
+.hero-card .ctx{ font-size:.92rem; color:var(--text2); }
+.chips{ display:flex; flex-wrap:wrap; gap:0; margin-top:1.25rem; border-top:1px solid var(--border); padding-top:1.1rem; }
+.chip{ display:flex; flex-direction:column; gap:.3rem; padding-right:1.6rem; margin-right:1.6rem; border-right:1px solid var(--border); }
+.chip:last-child{ border-right:none; margin-right:0; padding-right:0; }
+.chip .k{ font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text3); }
+.chip .v{ font-size:1.05rem; font-weight:700; color:var(--text); }
+.chip .v.good{ color:var(--good); }
+
+/* slot reels (§6) */
+.reel{ display:inline-block; height:1em; overflow:hidden; vertical-align:baseline; }
+.reel .strip{ display:flex; flex-direction:column; will-change:transform; }
+.reel .digit{ height:1em; line-height:1; display:flex; align-items:center; }
+.slot .static{ display:inline-block; }
+
+/* credential band */
+.band{ border-block:1px solid var(--border); }
+.band-inner{ display:flex; flex-wrap:wrap; gap:.4rem 2.2rem; padding:1.15rem 0; align-items:center; }
+.band-inner .lbl{ font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--text3); }
+.band-inner .dot{ width:4px; height:4px; border-radius:50%; background:var(--gold); opacity:.6; }
+.band-inner .item{ display:inline-flex; align-items:center; gap:.7rem; font-size:.86rem; color:var(--text2); }
+.band-inner .item b{ color:var(--text); font-weight:600; }
+
+/* section heads */
+.sechead{ display:flex; flex-direction:column; gap:1rem; max-width:42ch; }
+.sechead h2{
+  font-family:'Newsreader','Noto Serif TC',serif; font-weight:500;
+  font-size:clamp(2rem,4.4vw,3.1rem); line-height:1.08; letter-spacing:-.012em;
+}
+.sechead p{ color:var(--text2); font-size:1.02rem; }
+.pad{ padding:6rem 0; }
+
+/* The Ledger — principle cards */
+.ledger{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; margin-top:3.2rem; }
+.pcard{
+  background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--gold);
+  border-radius:15px; padding:1.8rem; display:flex; flex-direction:column; gap:.9rem;
+  transition:transform .3s cubic-bezier(.16,1,.3,1), border-color .3s ease;
+}
+.pcard:hover{ transform:translateY(-4px); border-color:var(--border2); border-left-color:var(--gold); }
+.pcard .no{ font-family:'Newsreader',serif; font-size:.95rem; color:var(--gold); font-variant-numeric:tabular-nums; }
+.pcard h3{ font-family:'Newsreader','Noto Serif TC',serif; font-weight:500; font-size:1.5rem; letter-spacing:-.01em; }
+.pcard p{ color:var(--text2); font-size:.95rem; }
+
+/* Stewardship — numbered ledger rows */
+.rows{ margin-top:2.6rem; border-top:1px solid var(--border); }
+.row{
+  display:grid; grid-template-columns:auto 1fr auto; gap:clamp(1rem,4vw,3rem); align-items:baseline;
+  padding:1.7rem .4rem; border-bottom:1px solid var(--border);
+  transition:background .3s ease, padding-left .3s cubic-bezier(.16,1,.3,1);
+}
+.row:hover{ background:var(--gold-bg); padding-left:1.2rem; }
+.row .rn{ font-family:'Newsreader',serif; font-size:1rem; color:var(--gold); font-variant-numeric:tabular-nums; min-width:2.2rem; }
+.row .rt{ font-family:'Newsreader','Noto Serif TC',serif; font-weight:500; font-size:clamp(1.4rem,2.6vw,2rem); letter-spacing:-.01em; }
+.row .rd{ color:var(--text2); font-size:.95rem; max-width:42ch; text-align:left; }
+
+/* Data moment */
+.chartwrap{ background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1.6rem 1.4rem 1.1rem; margin-top:2.8rem; }
+.chartwrap .cap{ display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:.5rem; padding:0 .4rem .9rem; }
+.chartwrap .cap .t{ font-family:'Newsreader',serif; font-size:1.15rem; }
+.chartwrap .cap .s{ font-size:.8rem; color:var(--text3); letter-spacing:.02em; }
+#chart{ width:100%; height:auto; display:block; }
+#chart .grid-line{ stroke:var(--grid); stroke-width:1; stroke-dasharray:3 4; }
+#chart .axis-base{ stroke:var(--border); stroke-width:1; }
+#chart .tickt{ fill:var(--tick); font-size:11px; font-variant-numeric:tabular-nums; font-family:'Hanken Grotesk',sans-serif; }
+#chart .s-fund{ stroke:var(--gold); stroke-width:2.75; fill:none; stroke-linejoin:round; stroke-linecap:round; }
+#chart .s-bench{ stroke:var(--clay); stroke-width:1.5; fill:none; stroke-dasharray:5 4; opacity:.85; stroke-linejoin:round; }
+#chart .s-infl{ stroke:var(--taupe); stroke-width:1.5; fill:none; stroke-dasharray:2 4; opacity:.7; stroke-linejoin:round; }
+#chart .area-fund{ fill:url(#fundFade); }
+#chart .endlbl{ font-size:11px; font-weight:600; font-family:'Hanken Grotesk',sans-serif; paint-order:stroke; stroke:var(--halo); stroke-width:3.5; stroke-linejoin:round; }
+#chart .endlbl .num{ font-variant-numeric:tabular-nums; }
+#chart .l-fund{ fill:var(--gold); }
+#chart .l-bench{ fill:var(--clay); }
+#chart .l-infl{ fill:var(--taupe); }
+.legend{ display:flex; flex-wrap:wrap; gap:1.3rem; padding:.9rem .4rem 0; }
+.legend span{ display:inline-flex; align-items:center; gap:.5rem; font-size:.78rem; color:var(--text2); }
+.legend i{ width:16px; height:0; border-top-width:2px; border-top-style:solid; display:inline-block; }
+
+/* Pull quote */
+.quote{ text-align:center; padding:6.5rem 0; }
+.quote blockquote{
+  font-family:'Newsreader','Noto Serif TC',serif; font-style:italic; font-weight:400;
+  font-size:clamp(1.6rem,3.6vw,2.7rem); line-height:1.34; letter-spacing:-.01em;
+  max-width:24ch; margin:1.6rem auto 1.7rem; color:var(--text);
+}
+.quote blockquote .mk{ color:var(--gold); font-style:normal; }
+.quote cite{ font-style:normal; font-size:.82rem; letter-spacing:.12em; text-transform:uppercase; color:var(--text3); }
+
+/* Stats divider grid (§4) */
+.stats{ display:grid; grid-template-columns:repeat(4,1fr); background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+.stat{ padding:2.2rem 1.6rem; box-shadow:1px 0 0 var(--border), 0 1px 0 var(--border); }
+.stat .sv{ font-family:'Newsreader','Noto Serif TC',serif; font-weight:500; font-size:clamp(2rem,4vw,2.9rem); font-variant-numeric:tabular-nums; line-height:1.1; }
+.stat .sl{ font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--text3); margin-top:.55rem; }
+
+/* CTA */
+.cta{ text-align:center; padding:7rem 0; }
+.cta h2{ font-family:'Newsreader','Noto Serif TC',serif; font-weight:500; font-size:clamp(2.2rem,5vw,3.6rem); line-height:1.08; letter-spacing:-.015em; margin:1.3rem auto .8rem; max-width:18ch; }
+.cta p{ color:var(--text2); max-width:44ch; margin:0 auto 2.2rem; }
+
+/* Footer */
+footer{ border-top:1px solid var(--border); padding:3.4rem 0 2.6rem; }
+.foot-grid{ display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:2rem; }
+.foot-grid .col-links{ display:flex; gap:2.4rem; flex-wrap:wrap; }
+.foot-grid a{ color:var(--text2); text-decoration:none; font-size:.85rem; transition:color .2s ease; }
+.foot-grid a:hover{ color:var(--gold); }
+.foot-meta{ font-size:.78rem; color:var(--text3); margin-top:2.4rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:.6rem; }
+
+/* reveal */
+.rv{ opacity:0; transform:translateY(8px); transition:opacity .28s ease, transform .28s ease; }
+.rv.in{ opacity:1; transform:none; }
+@media (prefers-reduced-motion:reduce){ .rv{ opacity:1; transform:none; transition:none; } }
+
+/* responsive */
+@media (max-width:900px){
+  .hero-grid{ grid-template-columns:1fr; align-items:start; }
+  .ledger{ grid-template-columns:1fr; }
+  .stats{ grid-template-columns:1fr 1fr; }
+  .row{ grid-template-columns:auto 1fr; }
+  .row .rd{ grid-column:2; }
+}
+@media (max-width:680px){
+  .navlinks .lnk{ display:none; }
+  .nav-cta{ display:none; }
+  .hero{ padding:8.5rem 0 4rem; }
+  .stat{ box-shadow:1px 0 0 var(--border), 0 1px 0 var(--border); }
+}
+</style>
+</head>
+<body>
+
+<div class="engrave"><svg id="rosette" viewBox="-110 -110 220 220" aria-hidden="true"></svg></div>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ============ NAV ============ -->
+<nav id="nav">
+  <a class="brand" href="#top"><span class="mark" aria-hidden="true"></span>QUIET&nbsp;GILT</a>
+  <div class="navlinks">
+    <a class="lnk" href="#philosophy" data-i18n="nav_philosophy">Philosophy</a>
+    <a class="lnk" href="#stewardship" data-i18n="nav_stewardship">Stewardship</a>
+    <a class="lnk" href="#record" data-i18n="nav_record">The Record</a>
+    <button class="langbtn" id="langtog" aria-label="切換語言 / Switch language">中文</button>
+    <button class="iconbtn" id="themetog" aria-label="Toggle theme"></button>
+    <a class="btn btn-gold nav-cta" href="#contact" data-i18n="nav_cta">Request introduction</a>
+  </div>
+</nav>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow rv" data-i18n="hero_eyebrow">A private wealth house · since 1987</span>
+      <h1 class="rv" data-i18n-html="hero_title">Wealth,<br><em>quietly kept.</em></h1>
+      <p class="lead rv" data-i18n="hero_lead">For three generations we have stewarded the fortunes of families who measure success in decades, not quarters. No fanfare. No noise. Only the patient compounding of what matters.</p>
+      <div class="hero-cta rv">
+        <a class="btn btn-gold" href="#contact" data-i18n="hero_cta1">Request an introduction</a>
+        <a class="btn btn-ghost" href="#philosophy" data-i18n="hero_cta2">Read our philosophy</a>
+      </div>
+    </div>
+
+    <aside class="hero-card rv">
+      <span class="eyebrow" data-i18n="card_eyebrow">Assets under quiet stewardship</span>
+      <div class="hero-num serif tnum slot" id="heroNum"></div>
+      <p class="ctx" data-i18n="card_ctx">Entrusted by 214 families across three generations.</p>
+      <div class="chips">
+        <div class="chip">
+          <span class="k" data-i18n="chip1_k">Avg client tenure</span>
+          <span class="v tnum">30 <span data-i18n="chip1_u">yr</span></span>
+        </div>
+        <div class="chip">
+          <span class="k" data-i18n="chip2_k">Capital held, 2008</span>
+          <span class="v good tnum">99.6%</span>
+        </div>
+        <div class="chip">
+          <span class="k" data-i18n="chip3_k">Founding partners</span>
+          <span class="v tnum">3</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ CREDENTIAL BAND ============ -->
+<section class="band">
+  <div class="wrap band-inner">
+    <span class="lbl" data-i18n="band_lbl">Mandates held in</span>
+    <span class="item"><b>Taipei</b></span><span class="dot"></span>
+    <span class="item"><b>Geneva</b></span><span class="dot"></span>
+    <span class="item"><b>Singapore</b></span><span class="dot"></span>
+    <span class="item"><b>London</b></span><span class="dot"></span>
+    <span class="item" style="margin-left:auto" data-i18n="band_note">By introduction only.</span>
+  </div>
+</section>
+
+<!-- ============ PHILOSOPHY / THE LEDGER ============ -->
+<section class="pad" id="philosophy">
+  <div class="wrap">
+    <div class="sechead rv">
+      <span class="eyebrow" data-i18n="phil_eyebrow">The ledger</span>
+      <h2 data-i18n="phil_title">Restraint is the whole discipline.</h2>
+      <p data-i18n="phil_lead">The rarest skill in managing a fortune is the patience to do almost nothing. Three principles govern every decision we make on your behalf.</p>
+    </div>
+    <div class="ledger">
+      <article class="pcard rv">
+        <span class="no">01</span>
+        <h3 data-i18n="p1_t">Restraint</h3>
+        <p data-i18n="p1_d">We do less, deliberately. Most damage to capital is self-inflicted — the cost of acting when stillness would serve better.</p>
+      </article>
+      <article class="pcard rv">
+        <span class="no">02</span>
+        <h3 data-i18n="p2_t">Permanence</h3>
+        <p data-i18n="p2_d">We invest on a generational horizon. Our average holding outlives the funds that chase it, and most of the people who run them.</p>
+      </article>
+      <article class="pcard rv">
+        <span class="no">03</span>
+        <h3 data-i18n="p3_t">Discretion</h3>
+        <p data-i18n="p3_d">Your name appears nowhere. Privacy is not a service we offer; it is the foundation the house is built upon.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="rule-gold"></div></div>
+
+<!-- ============ STEWARDSHIP ============ -->
+<section class="pad" id="stewardship">
+  <div class="wrap">
+    <div class="sechead rv">
+      <span class="eyebrow" data-i18n="stew_eyebrow">Stewardship</span>
+      <h2 data-i18n="stew_title">What we keep, and how.</h2>
+    </div>
+    <div class="rows">
+      <div class="row rv">
+        <span class="rn">01</span>
+        <span class="rt serif" data-i18n="s1_t">Private investment</span>
+        <span class="rd" data-i18n="s1_d">Bespoke portfolios built one family at a time — never a model, never a product shelf.</span>
+      </div>
+      <div class="row rv">
+        <span class="rn">02</span>
+        <span class="rt serif" data-i18n="s2_t">Estate &amp; succession</span>
+        <span class="rd" data-i18n="s2_d">The orderly passage of wealth across generations, structured long before it is needed.</span>
+      </div>
+      <div class="row rv">
+        <span class="rn">03</span>
+        <span class="rt serif" data-i18n="s3_t">Philanthropy</span>
+        <span class="rd" data-i18n="s3_d">Giving designed to endure — foundations and trusts that outlast their founders.</span>
+      </div>
+      <div class="row rv">
+        <span class="rn">04</span>
+        <span class="rt serif" data-i18n="s4_t">Family governance</span>
+        <span class="rd" data-i18n="s4_d">Counsel for the questions money cannot answer alone — and the ones it complicates.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE RECORD (data moment, §8) ============ -->
+<section class="pad" id="record" style="padding-top:0">
+  <div class="wrap">
+    <div class="sechead rv">
+      <span class="eyebrow" data-i18n="rec_eyebrow">The record</span>
+      <h2 data-i18n="rec_title">A single dollar, quietly kept.</h2>
+      <p data-i18n="rec_lead">Growth of capital entrusted at our founding in 1987, against a broad market benchmark and the eroding hand of inflation.</p>
+    </div>
+    <div class="chartwrap rv">
+      <div class="cap">
+        <span class="t serif" data-i18n="rec_cap_t">Real growth of $1 · 1987–2024</span>
+        <span class="s" data-i18n="rec_cap_s">After fees · net of inflation context</span>
+      </div>
+      <svg id="chart" viewBox="0 0 760 420" role="img" aria-label="Line chart: $1 entrusted in 1987 grew to roughly 38× under Quiet Gilt, against 22× for the benchmark and 2.7× for inflation.">
+        <defs>
+          <linearGradient id="fundFade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="var(--gold)" stop-opacity="0.32"/>
+            <stop offset="1" stop-color="var(--gold)" stop-opacity="0.02"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="legend" aria-hidden="true">
+        <span><i style="border-top-color:var(--gold)"></i><span data-i18n="leg_fund">Quiet Gilt</span></span>
+        <span><i style="border-top-color:var(--clay); border-top-style:dashed"></i><span data-i18n="leg_bench">Benchmark</span></span>
+        <span><i style="border-top-color:var(--taupe); border-top-style:dashed"></i><span data-i18n="leg_infl">Inflation</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="rule"></div></div>
+
+<!-- ============ PULL QUOTE ============ -->
+<section class="quote">
+  <div class="wrap rv">
+    <span class="eyebrow center" data-i18n="q_eyebrow">In their words</span>
+    <blockquote data-i18n-html="q_text">They returned my grandfather's call within the hour. <span class="mk">Forty years on,</span> they returned mine just as quickly.</blockquote>
+    <cite data-i18n="q_cite">— A principal · fourth-generation client</cite>
+  </div>
+</section>
+
+<!-- ============ STATS ============ -->
+<section style="padding-bottom:6rem">
+  <div class="wrap">
+    <div class="stats rv">
+      <div class="stat"><div class="sv tnum">1987</div><div class="sl" data-i18n="st1">Year founded</div></div>
+      <div class="stat"><div class="sv tnum">$4.2B</div><div class="sl" data-i18n="st2">Under stewardship</div></div>
+      <div class="stat"><div class="sv tnum">214</div><div class="sl" data-i18n="st3">Families served</div></div>
+      <div class="stat"><div class="sv tnum">30 yr</div><div class="sl" data-i18n="st4">Average tenure</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta" id="contact">
+  <div class="wrap rv">
+    <span class="eyebrow center" data-i18n="cta_eyebrow">An introduction</span>
+    <h2 data-i18n="cta_title">Some doors open quietly.</h2>
+    <p data-i18n="cta_lead">We accept a small number of new families each year, always by introduction. If our way of working speaks to yours, we would welcome a conversation.</p>
+    <a class="btn btn-gold" href="#" data-i18n="cta_btn">Request an introduction</a>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <a class="brand" href="#top"><span class="mark" aria-hidden="true"></span>QUIET&nbsp;GILT</a>
+      <div class="col-links">
+        <a href="#philosophy" data-i18n="nav_philosophy">Philosophy</a>
+        <a href="#stewardship" data-i18n="nav_stewardship">Stewardship</a>
+        <a href="#record" data-i18n="nav_record">The Record</a>
+        <a href="#contact" data-i18n="foot_contact">Contact</a>
+      </div>
+    </div>
+    <div class="foot-meta">
+      <span data-i18n="foot_legal">© 1987–2026 Quiet Gilt Partners. A private wealth house. By introduction only.</span>
+      <span data-i18n="foot_reg">Authorised &amp; regulated · Member, Association of Private Trustees</span>
+    </div>
+  </div>
+</footer>
+
+</main>
+
+<script>
+(function(){
+  'use strict';
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- i18n ---------- */
+  var STR = {
+    en:{
+      nav_philosophy:"Philosophy", nav_stewardship:"Stewardship", nav_record:"The Record", nav_cta:"Request introduction",
+      hero_eyebrow:"A private wealth house · since 1987",
+      hero_title:"Wealth,<br><em>quietly kept.</em>",
+      hero_lead:"For three generations we have stewarded the fortunes of families who measure success in decades, not quarters. No fanfare. No noise. Only the patient compounding of what matters.",
+      hero_cta1:"Request an introduction", hero_cta2:"Read our philosophy",
+      card_eyebrow:"Assets under quiet stewardship",
+      card_ctx:"Entrusted by 214 families across three generations.",
+      chip1_k:"Avg client tenure", chip1_u:"yr", chip2_k:"Capital held, 2008", chip3_k:"Founding partners",
+      band_lbl:"Mandates held in", band_note:"By introduction only.",
+      phil_eyebrow:"The ledger", phil_title:"Restraint is the whole discipline.",
+      phil_lead:"The rarest skill in managing a fortune is the patience to do almost nothing. Three principles govern every decision we make on your behalf.",
+      p1_t:"Restraint", p1_d:"We do less, deliberately. Most damage to capital is self-inflicted — the cost of acting when stillness would serve better.",
+      p2_t:"Permanence", p2_d:"We invest on a generational horizon. Our average holding outlives the funds that chase it, and most of the people who run them.",
+      p3_t:"Discretion", p3_d:"Your name appears nowhere. Privacy is not a service we offer; it is the foundation the house is built upon.",
+      stew_eyebrow:"Stewardship", stew_title:"What we keep, and how.",
+      s1_t:"Private investment", s1_d:"Bespoke portfolios built one family at a time — never a model, never a product shelf.",
+      s2_t:"Estate & succession", s2_d:"The orderly passage of wealth across generations, structured long before it is needed.",
+      s3_t:"Philanthropy", s3_d:"Giving designed to endure — foundations and trusts that outlast their founders.",
+      s4_t:"Family governance", s4_d:"Counsel for the questions money cannot answer alone — and the ones it complicates.",
+      rec_eyebrow:"The record", rec_title:"A single dollar, quietly kept.",
+      rec_lead:"Growth of capital entrusted at our founding in 1987, against a broad market benchmark and the eroding hand of inflation.",
+      rec_cap_t:"Real growth of $1 · 1987–2024", rec_cap_s:"After fees · net of inflation context",
+      leg_fund:"Quiet Gilt", leg_bench:"Benchmark", leg_infl:"Inflation",
+      q_eyebrow:"In their words",
+      q_text:"They returned my grandfather's call within the hour. <span class=\"mk\">Forty years on,</span> they returned mine just as quickly.",
+      q_cite:"— A principal · fourth-generation client",
+      st1:"Year founded", st2:"Under stewardship", st3:"Families served", st4:"Average tenure",
+      cta_eyebrow:"An introduction", cta_title:"Some doors open quietly.",
+      cta_lead:"We accept a small number of new families each year, always by introduction. If our way of working speaks to yours, we would welcome a conversation.",
+      cta_btn:"Request an introduction",
+      foot_contact:"Contact",
+      foot_legal:"© 1987–2026 Quiet Gilt Partners. A private wealth house. By introduction only.",
+      foot_reg:"Authorised & regulated · Member, Association of Private Trustees"
+    },
+    zh:{
+      nav_philosophy:"理念", nav_stewardship:"託管", nav_record:"紀錄", nav_cta:"預約引薦",
+      hero_eyebrow:"私人財富之家 · 創立於 1987 年",
+      hero_title:"財富，<br><em>靜靜守護。</em>",
+      hero_lead:"三個世代以來，我們為以十年、而非以季度衡量成就的家族守護財富。不喧嘩，不張揚，只有讓真正重要之事，靜靜地複利累積。",
+      hero_cta1:"預約引薦", hero_cta2:"閱讀我們的理念",
+      card_eyebrow:"靜置託管資產",
+      card_ctx:"承蒙 214 個家族、橫跨三個世代的託付。",
+      chip1_k:"平均委託年資", chip1_u:"年", chip2_k:"2008 年資本留存", chip3_k:"創始合夥人",
+      band_lbl:"託管據點", band_note:"僅憑引薦。",
+      phil_eyebrow:"帳簿", phil_title:"克制，即是全部的修為。",
+      phil_lead:"管理財富最稀有的能力，是幾近不作為的耐心。三項原則，主宰我們代您所做的每一個決定。",
+      p1_t:"克制", p1_d:"我們刻意少做。對資本最大的傷害，往往是自找的——是在應當靜止時出手所付出的代價。",
+      p2_t:"恆久", p2_d:"我們以世代為視野進行投資。我們的平均持有期，比追逐它的基金、以及經營那些基金的多數人，都更為長久。",
+      p3_t:"審慎", p3_d:"您的名字不會出現在任何地方。隱私並非我們提供的服務，而是這個家族辦公室賴以立基的根本。",
+      stew_eyebrow:"託管", stew_title:"我們守護什麼，又如何守護。",
+      s1_t:"私人投資", s1_d:"逐一家族量身打造的投資組合——絕非套用模型，亦非貨架上的產品。",
+      s2_t:"遺產與傳承", s2_d:"財富在世代之間有序傳遞，遠在需要之前便已妥善安排。",
+      s3_t:"慈善", s3_d:"為長存而設計的給予——能延續至創立者身後的基金會與信託。",
+      s4_t:"家族治理", s4_d:"為金錢無法獨力回答的問題提供諮詢——以及那些被金錢複雜化的問題。",
+      rec_eyebrow:"紀錄", rec_title:"靜靜守護的，一塊錢。",
+      rec_lead:"自 1987 年創立之初所託付的資本成長，對照廣泛市場指標，以及通膨無聲的侵蝕。",
+      rec_cap_t:"一美元的實質成長 · 1987–2024", rec_cap_s:"計入費用 · 對照通膨脈絡",
+      leg_fund:"Quiet Gilt", leg_bench:"市場指標", leg_infl:"通膨",
+      q_eyebrow:"客戶之言",
+      q_text:"他們在一小時內回覆了我祖父的來電。<span class=\"mk\">四十年後，</span>回覆我，同樣迅速。",
+      q_cite:"— 一位委託人 · 第四代客戶",
+      st1:"創立年份", st2:"託管資產", st3:"服務家族", st4:"平均年資",
+      cta_eyebrow:"一次引薦", cta_title:"有些門，靜靜開啟。",
+      cta_lead:"我們每年僅接納少數新家族，且始終透過引薦。若我們的做事方式與您相契，誠摯期待一次交談。",
+      cta_btn:"預約引薦",
+      foot_contact:"聯絡",
+      foot_legal:"© 1987–2026 Quiet Gilt Partners 私人財富之家。僅憑引薦。",
+      foot_reg:"受權監管 · 私人受託人協會會員"
+    }
+  };
+
+  var lang = 'en';
+  function applyLang(l){
+    lang = l;
+    var d = STR[l];
+    document.documentElement.lang = (l === 'zh') ? 'zh-Hant' : 'en';
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var k = el.getAttribute('data-i18n'); if(d[k]!=null) el.textContent = d[k];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(function(el){
+      var k = el.getAttribute('data-i18n-html'); if(d[k]!=null) el.innerHTML = d[k];
+    });
+    document.getElementById('langtog').textContent = (l === 'zh') ? 'EN' : '中文';
+    try{ localStorage.setItem('qg-lang', l); }catch(e){}
+  }
+  document.getElementById('langtog').addEventListener('click', function(){
+    applyLang(lang === 'en' ? 'zh' : 'en');
+  });
+
+  /* ---------- theme ---------- */
+  var SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+  var MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+  var themeBtn = document.getElementById('themetog');
+  function applyTheme(t){
+    document.documentElement.setAttribute('data-theme', t);
+    themeBtn.innerHTML = (t === 'dark') ? MOON : SUN;
+    try{ localStorage.setItem('qg-theme', t); }catch(e){}
+  }
+  themeBtn.addEventListener('click', function(){
+    applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  /* restore prefs */
+  var st = 'dark', sl = 'en';
+  try{ st = localStorage.getItem('qg-theme') || 'dark'; sl = localStorage.getItem('qg-lang') || 'en'; }catch(e){}
+  applyTheme(st); applyLang(sl);
+
+  /* ---------- nav shrink ---------- */
+  var nav = document.getElementById('nav');
+  addEventListener('scroll', function(){ nav.classList.toggle('shrink', scrollY > 24); }, {passive:true});
+
+  /* ---------- engraved rosette (guilloché, gold hairlines) ---------- */
+  (function(){
+    var svg = document.getElementById('rosette');
+    function hypo(R, r, d, scale, steps){
+      var pts = [], k = (R - r) / r;
+      for(var i=0;i<=steps;i++){
+        var t = i/steps * Math.PI * 2 * r;
+        var x = ((R - r)*Math.cos(t) + d*Math.cos(k*t)) * scale;
+        var y = ((R - r)*Math.sin(t) - d*Math.sin(k*t)) * scale;
+        pts.push((i?'L':'M') + x.toFixed(2) + ' ' + y.toFixed(2));
+      }
+      return pts.join(' ') + 'Z';
+    }
+    var specs = [[5,3,5,11,720],[7,4,4,12,1000],[8,3,6,9.5,1100]];
+    specs.forEach(function(s){
+      var p = document.createElementNS('http://www.w3.org/2000/svg','path');
+      p.setAttribute('d', hypo(s[0],s[1],s[2],s[3],s[4]));
+      svg.appendChild(p);
+    });
+  })();
+
+  /* ---------- slot-machine hero number (§6) ---------- */
+  var SPRING = (function(zeta, omega, steps){
+    if(reduce) return 'ease-out';
+    var pts = [], wd = omega*Math.sqrt(1-zeta*zeta);
+    for(var i=0;i<=steps;i++){
+      var t = i/steps;
+      var v = 1 - Math.exp(-zeta*omega*t)*(Math.cos(wd*t)+(zeta*omega/wd)*Math.sin(wd*t));
+      pts.push(+v.toFixed(4));
+    }
+    pts[pts.length-1] = 1;
+    return 'linear(' + pts.join(',') + ')';
+  })(0.68, 11, 50);
+
+  function buildSlot(el, str){
+    el.innerHTML = ''; el.setAttribute('aria-label', str);
+    for(var i=0;i<str.length;i++){
+      var ch = str[i];
+      if(ch >= '0' && ch <= '9'){
+        var reel = document.createElement('span'); reel.className = 'reel'; reel.dataset.target = ch;
+        var strip = document.createElement('span'); strip.className = 'strip';
+        for(var loop=0; loop<6; loop++){
+          for(var dn=0; dn<10; dn++){
+            var dg = document.createElement('span'); dg.className = 'digit'; dg.textContent = dn; strip.appendChild(dg);
+          }
+        }
+        reel.appendChild(strip); el.appendChild(reel);
+      } else {
+        var s = document.createElement('span'); s.className = 'static'; s.textContent = ch; el.appendChild(s);
+      }
+    }
+  }
+  function rollSlot(el){
+    var reels = el.querySelectorAll('.reel');
+    reels.forEach(function(reel, idx){
+      var target = +reel.dataset.target;
+      // Collapse the spinning reel to a plain static digit so its final rest
+      // is pixel-identical to the static characters — never between boundaries.
+      function settle(){ reel.textContent = target; }
+      if(reduce){ settle(); return; }
+      var strip = reel.querySelector('.strip');
+      var h = reel.querySelector('.digit').getBoundingClientRect().height;
+      var loops = 4 + (idx % 2);
+      var finalY = -((loops*10 + target) * h);
+      var anim = strip.animate(
+        [{transform:'translateY(0)'},{transform:'translateY(' + finalY + 'px)'}],
+        {duration: 920 + idx*130 + Math.random()*160, easing: SPRING, fill:'forwards'}
+      );
+      anim.onfinish = settle;
+    });
+  }
+  var heroNum = document.getElementById('heroNum');
+  buildSlot(heroNum, '$4.2B');
+
+  /* ---------- Tufte chart (§8): hand-built, theme-recoloring via CSS classes ---------- */
+  (function(){
+    var svg = document.getElementById('chart');
+    var W = 760, H = 420, mL = 40, mR = 96, mT = 24, mB = 38;
+    var data = [
+      {y:1987,f:1,   b:1,   i:1   },
+      {y:1990,f:1.4, b:1.3, i:1.10},
+      {y:1995,f:2.6, b:2.2, i:1.25},
+      {y:2000,f:5.2, b:4.6, i:1.50},
+      {y:2003,f:5.0, b:3.6, i:1.60},
+      {y:2008,f:8.5, b:6.8, i:1.85},
+      {y:2009,f:8.2, b:5.2, i:1.90},
+      {y:2013,f:15,  b:9.5, i:2.10},
+      {y:2018,f:24,  b:15,  i:2.35},
+      {y:2021,f:33,  b:19,  i:2.55},
+      {y:2024,f:38,  b:22,  i:2.70}
+    ];
+    var yMax = 40;
+    var xMin = 1987, xMax = 2024;
+    function X(yr){ return mL + (yr - xMin)/(xMax - xMin) * (W - mL - mR); }
+    function Y(v){ return (H - mB) - v/yMax * (H - mB - mT); }
+    var NS = 'http://www.w3.org/2000/svg';
+    function el(tag, attrs){ var e = document.createElementNS(NS, tag); for(var k in attrs) e.setAttribute(k, attrs[k]); return e; }
+
+    // horizontal gridlines + y ticks
+    for(var g=0; g<=40; g+=10){
+      svg.appendChild(el('line', {class:'grid-line', x1:mL, x2:W-mR, y1:Y(g), y2:Y(g)}));
+      var yt = el('text', {class:'tickt', x:mL-8, y:Y(g)+3.5, 'text-anchor':'end'});
+      yt.textContent = g === 0 ? '$0' : g + '×';
+      svg.appendChild(yt);
+    }
+    // x ticks
+    [1987,2000,2012,2024].forEach(function(yr){
+      var xt = el('text', {class:'tickt', x:X(yr), y:H-mB+20, 'text-anchor':'middle'});
+      xt.textContent = yr; svg.appendChild(xt);
+    });
+
+    function path(key){ return data.map(function(d,i){ return (i?'L':'M') + X(d.y).toFixed(1) + ' ' + Y(d[key]).toFixed(1); }).join(' '); }
+
+    // area top-fade under fund (sanctioned gradient)
+    var area = 'M' + X(data[0].y) + ' ' + Y(0) + ' ' + data.map(function(d){ return 'L'+X(d.y).toFixed(1)+' '+Y(d.f).toFixed(1); }).join(' ') + ' L' + X(data[data.length-1].y) + ' ' + Y(0) + ' Z';
+    svg.appendChild(el('path', {class:'area-fund', d:area}));
+
+    // baseline
+    svg.appendChild(el('line', {class:'axis-base', x1:mL, x2:W-mR, y1:Y(0), y2:Y(0)}));
+
+    // series (context first, primary last)
+    svg.appendChild(el('path', {class:'s-infl',  d:path('i')}));
+    svg.appendChild(el('path', {class:'s-bench', d:path('b')}));
+    svg.appendChild(el('path', {class:'s-fund',  d:path('f')}));
+
+    // direct end-labels with surface halo (staggered)
+    function endLabel(key, cls, label, val, dy){
+      var last = data[data.length-1];
+      var t = el('text', {class:'endlbl '+cls, x:X(last.y)+8, y:Y(last[key])+dy, 'text-anchor':'start'});
+      t.appendChild(document.createTextNode(label + ' '));
+      var n = el('tspan', {class:'num'}); n.textContent = val; t.appendChild(n);
+      svg.appendChild(t);
+    }
+    endLabel('f','l-fund','Quiet Gilt','38×', 4);
+    endLabel('b','l-bench','Benchmark','22×', 4);
+    endLabel('i','l-infl','Inflation','2.7×', 4);
+  })();
+
+  /* ---------- reveal on scroll + hero slot trigger ---------- */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, {threshold:0.12, rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+  // fire the hero roll once the card settles in
+  function fireHero(){ rollSlot(heroNum); }
+  if('fonts' in document && document.fonts.ready){ document.fonts.ready.then(function(){ setTimeout(fireHero, 220); }); }
+  else setTimeout(fireHero, 400);
+})();
+</script>
+</body>
+</html>
