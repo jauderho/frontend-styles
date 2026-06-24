@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Frontend Styles — Four Design Languages</title>
+<meta name="description" content="A curated archive of four self-contained, contract-bound visual languages: catfu, cyberdeck, meridian, and quiet-gilt." />
+
+<!-- Pre-paint theme: set data-theme before first paint to avoid a flash. -->
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("fs-gallery-theme");
+      if (!t) t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", t);
+    } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<!-- Curator chrome + every specimen's own faces, loaded once. -->
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Archivo:wght@500;700;900&family=IBM+Plex+Mono:wght@300;400;500;600&family=Press+Start+2P&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Spline+Sans:wght@300;400;500;600&family=Spline+Sans+Mono:wght@400;500&family=Newsreader:ital,wght@0,400;0,500;1,400&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+/* ════════════════════════════════════════════════════════════════════
+   THE CURATOR — gallery chrome tokens (achromatic by design).
+   The four specimen plates supply all the colour; the walls stay quiet.
+   Dark first, light second.
+   ════════════════════════════════════════════════════════════════════ */
+:root[data-theme="dark"]{
+  --bg:#0c0c0e; --surface:#151517; --surface-2:#1c1c1f; --bg-3:#232327;
+  --border:#2a2a2e; --border-2:#3a3a40;
+  --text:#ededec; --text-2:#a6a6a8; --text-3:#838387;
+  --accent:#c8c2b4;                 /* platinum / parchment — hue-neutral */
+  --accent-soft:rgba(200,194,180,.12);
+  --on-accent:#1a1a17;
+  --wash:rgba(255,255,255,.02);
+}
+:root[data-theme="light"]{
+  --bg:#f3f1ec; --surface:#ffffff; --surface-2:#ece9e1; --bg-3:#e4e0d6;
+  --border:#ddd8cc; --border-2:#cbc5b6;
+  --text:#1c1b18; --text-2:#55534d; --text-3:#6f6c64;
+  --accent:#7a6f52; --accent-soft:rgba(122,111,82,.12); --on-accent:#ffffff;
+  --wash:rgba(0,0,0,.015);
+}
+
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
+  font-size:15px; line-height:1.6; letter-spacing:-.005em;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  transition:background .35s ease, color .35s ease;
+}
+::selection{background:var(--accent-soft); color:var(--text);}
+.tnum{font-variant-numeric:tabular-nums;}
+
+.skip{position:absolute; left:-999px; top:0; background:var(--accent); color:var(--on-accent);
+  padding:10px 16px; border-radius:8px; z-index:100; font-weight:600;}
+.skip:focus{left:12px; top:12px;}
+
+a{color:inherit;}
+:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:4px;}
+
+.wrap{width:min(1240px,92vw); margin-inline:auto;}
+
+/* ── Eyebrow / kicker ───────────────────────────────────────────── */
+.eyebrow{
+  font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.18em;
+  color:var(--accent); display:inline-flex; align-items:center; gap:.7em;
+}
+.eyebrow::before{content:""; width:26px; height:1px; background:var(--accent); opacity:.7;}
+
+/* ════════ HEADER / NAV ════════ */
+.site-head{
+  position:sticky; top:0; z-index:30;
+  background:color-mix(in srgb, var(--bg) 80%, transparent);
+  backdrop-filter:blur(12px) saturate(1.1);
+  border-bottom:1px solid var(--border);
+}
+.site-head .wrap{display:flex; align-items:center; gap:18px; height:60px;}
+.brand{display:flex; align-items:baseline; gap:.55em; text-decoration:none; margin-right:auto;}
+.brand .mark{
+  font-family:"Instrument Serif",serif; font-size:23px; line-height:1;
+  letter-spacing:.01em; color:var(--text);
+}
+.brand .mark em{font-style:italic; color:var(--accent);}
+.brand .sub{font-size:10.5px; text-transform:uppercase; letter-spacing:.2em; color:var(--text-3);}
+.nav-links{display:flex; gap:4px;}
+.nav-links a{
+  text-decoration:none; color:var(--text-2); font-size:12px; font-weight:500;
+  text-transform:lowercase; letter-spacing:.01em; padding:7px 11px; border-radius:8px;
+  transition:color .2s ease, background .2s ease;
+}
+.nav-links a:hover{color:var(--text); background:var(--surface-2);}
+
+/* theme rocker */
+.toggle{
+  appearance:none; border:1px solid var(--border-2); background:var(--surface-2);
+  width:56px; height:30px; border-radius:100px; position:relative; cursor:pointer;
+  flex:0 0 auto; transition:background .25s ease, border-color .25s ease;
+}
+.toggle::after{
+  content:""; position:absolute; top:2px; left:2px; width:24px; height:24px;
+  border-radius:50%; background:var(--accent); transition:transform .25s cubic-bezier(.16,1,.3,1);
+}
+:root[data-theme="light"] .toggle::after{transform:translateX(26px);}
+.toggle .ic{position:absolute; top:50%; transform:translateY(-50%); font-size:11px; color:var(--text-3); pointer-events:none;}
+.toggle .ic.moon{left:8px;} .toggle .ic.sun{right:8px;}
+
+/* ════════ HERO ════════ */
+.hero{position:relative; padding-block:clamp(3.5rem,9vh,7rem) clamp(2.5rem,6vh,4rem);}
+.hero .wrap{position:relative;}
+/* curatorial crop-marks — the signature framing motif */
+.crop{position:absolute; width:16px; height:16px; pointer-events:none; opacity:.55;}
+.crop::before,.crop::after{content:""; position:absolute; background:var(--border-2);}
+.crop::before{width:16px; height:1px;} .crop::after{width:1px; height:16px;}
+.crop.tl{top:-10px; left:-10px;} .crop.tr{top:-10px; right:-10px;} .crop.tr::after{right:0;}
+.crop.bl{bottom:-10px; left:-10px;} .crop.bl::before{bottom:0;}
+.crop.br{bottom:-10px; right:-10px;} .crop.br::before{bottom:0;} .crop.br::after{right:0;}
+
+.hero h1{
+  font-family:"Instrument Serif",serif; font-weight:400;
+  font-size:clamp(2.8rem,8vw,6.4rem); line-height:.98; letter-spacing:-.01em;
+  margin:.5rem 0 0; max-width:16ch;
+}
+.hero h1 em{font-style:italic; color:var(--accent);}
+.hero .lede{
+  margin:1.4rem 0 0; max-width:60ch; font-size:clamp(1rem,1.5vw,1.18rem);
+  font-weight:300; color:var(--text-2); line-height:1.65;
+}
+.hero .lede b{color:var(--text); font-weight:500;}
+
+/* hairline stat strip */
+.facts{
+  margin-top:clamp(2rem,5vh,3.4rem); border:1px solid var(--border); border-radius:14px;
+  display:grid; grid-template-columns:repeat(4,1fr); overflow:hidden; background:var(--surface);
+}
+.facts > div{padding:18px 20px; border-left:1px solid var(--border);}
+.facts > div:first-child{border-left:none;}
+.facts .v{font-family:"Instrument Serif",serif; font-size:clamp(1.8rem,3.4vw,2.5rem); line-height:1; color:var(--text);}
+.facts .v small{font-size:.5em; color:var(--text-3); font-family:"Schibsted Grotesk",sans-serif; letter-spacing:.04em;}
+.facts .k{margin-top:9px; font-size:10.5px; text-transform:uppercase; letter-spacing:.13em; color:var(--text-3);}
+
+/* ════════ SPECIMEN SECTION ════════ */
+.specimens-sec{padding-block:clamp(1rem,3vh,2rem) clamp(4rem,9vh,7rem);}
+.sec-head{display:flex; align-items:baseline; justify-content:space-between; gap:24px; flex-wrap:wrap; margin-bottom:clamp(1.6rem,4vh,2.4rem);}
+.sec-head h2{font-family:"Instrument Serif",serif; font-weight:400; font-size:clamp(1.5rem,3vw,2.1rem); margin:.4rem 0 0; letter-spacing:-.01em;}
+.sec-head p{margin:0; max-width:34ch; color:var(--text-2); font-size:13.5px;}
+
+.specimens{display:grid; grid-template-columns:repeat(2,1fr); gap:clamp(20px,2.6vw,30px);}
+
+/* the plate (curator frame) */
+.spec{
+  background:var(--surface); border:1px solid var(--border); border-radius:18px;
+  overflow:hidden; display:flex; flex-direction:column;
+  opacity:0; transform:translateY(26px);
+  transition:opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1),
+             border-color .3s ease, box-shadow .3s ease;
+}
+.spec.in{opacity:1; transform:none;}
+.spec:hover{border-color:var(--border-2); box-shadow:0 18px 50px -24px rgba(0,0,0,.5);}
+.spec-top{display:flex; align-items:flex-start; gap:14px; padding:20px 22px 16px;}
+.spec-no{
+  font-family:"Instrument Serif",serif; font-size:34px; line-height:.8; color:var(--accent);
+  font-variant-numeric:tabular-nums; flex:0 0 auto; padding-top:2px;
+}
+.spec-id h3{margin:0; font-size:19px; font-weight:600; letter-spacing:-.01em;}
+.spec-id .concept{margin:2px 0 0; font-size:12.5px; color:var(--text-2); font-style:italic; font-family:"Instrument Serif",serif;}
+
+/* the live window — a framed, always-dark "display" */
+.window{position:relative; height:clamp(220px,28vw,272px); overflow:hidden; border-block:1px solid var(--border); isolation:isolate;}
+
+/* meta + footer */
+.spec-meta{padding:16px 22px; display:flex; flex-direction:column; gap:13px;}
+.swatches{display:flex; gap:0;}
+.swatches span{flex:1; height:24px; position:relative;}
+.swatches span:first-child{border-radius:5px 0 0 5px;} .swatches span:last-child{border-radius:0 5px 5px 0;}
+.metarow{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:11px; color:var(--text-3); text-transform:uppercase; letter-spacing:.07em;}
+.metarow b{color:var(--text-2); font-weight:600;}
+.spec-foot{margin-top:auto; padding:14px 22px 18px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:12px;}
+.spec-foot .tag{font-size:10.5px; text-transform:uppercase; letter-spacing:.14em; color:var(--text-3);}
+/* the whole plate is one link */
+.spec-link{display:flex; flex-direction:column; flex:1; text-decoration:none; color:inherit;}
+.spec-link:focus-visible{outline:2px solid var(--accent); outline-offset:-3px; border-radius:18px;}
+.open{
+  font-size:12.5px; font-weight:600; color:var(--text);
+  display:inline-flex; align-items:center; gap:7px; padding:9px 15px; border-radius:9px;
+  border:1px solid var(--border-2); background:var(--surface-2);
+  transition:background .2s ease, border-color .2s ease, color .2s ease;
+}
+.spec:hover .open{background:var(--accent); border-color:var(--accent); color:var(--on-accent);}
+.open .ar{transition:transform .2s ease;}
+.spec:hover .open .ar{transform:translate(2px,-2px);}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SPECIMEN 01 — catfu (cassette-futurism). Tokens scoped & authentic.
+   ═══════════════════════════════════════════════════════════════════ */
+.w-catfu{
+  --cf-bg:#121316; --cf-panel:#1a1a18; --cf-line:#303134; --cf-line2:#43444a;
+  --cf-ink:#efece5; --cf-dim:#b2b2ac; --cf-blue:#2e7dc4; --cf-core:#235594;
+  --cf-screen:#6bb6f5; --cf-amber:#ff6a00; --cf-green:#36e27b;
+  background:var(--cf-bg);
+  background-image:radial-gradient(rgba(95,176,240,.06) 1px, transparent 1px);
+  background-size:13px 13px;
+  font-family:"IBM Plex Mono",ui-monospace,monospace; color:var(--cf-ink);
+  text-transform:lowercase; padding:14px 16px; display:flex; flex-direction:column; gap:11px;
+}
+.w-catfu .cf-bar{display:flex; align-items:center; gap:9px; border-bottom:1px solid var(--cf-line); padding-bottom:9px;}
+.w-catfu .led{width:7px; height:7px; flex:0 0 auto; background:var(--cf-line2);}
+.w-catfu .led.on{background:var(--cf-green); box-shadow:0 0 6px var(--cf-green);}
+.w-catfu .led.rec{background:var(--cf-amber); box-shadow:0 0 6px var(--cf-amber); animation:cf-blink 1s step-end infinite;}
+.w-catfu .cf-name{font-size:10px; letter-spacing:.04em; color:var(--cf-dim); margin-left:2px;}
+.w-catfu .cf-mode{margin-left:auto; font-size:8px; text-transform:uppercase; letter-spacing:.16em; color:#909089;}
+.w-catfu .cf-mid{display:flex; gap:12px; align-items:stretch;}
+.w-catfu .lcd{
+  background:#06121f; border:1px solid #0a3252; padding:9px 11px; flex:1;
+  display:flex; flex-direction:column; justify-content:center; gap:4px;
+}
+.w-catfu .lcd .tag{font-family:"Press Start 2P",monospace; font-size:6px; color:var(--cf-amber); text-shadow:0 0 6px rgba(255,106,0,.6); text-transform:uppercase;}
+.w-catfu .lcd .val{font-family:"Archivo",sans-serif; font-stretch:125%; font-weight:900; font-size:30px; line-height:1; color:var(--cf-screen); text-shadow:0 0 9px rgba(107,182,245,.55); font-variant-numeric:tabular-nums;}
+.w-catfu .lcd .val small{font-family:"IBM Plex Mono",monospace; font-weight:400; font-size:11px; color:var(--cf-screen); opacity:.8; margin-left:4px;}
+.w-catfu .knob{
+  width:46px; height:46px; border-radius:50%; flex:0 0 auto; align-self:center;
+  background:radial-gradient(circle at 38% 32%, #3a6fa0, var(--cf-core) 60%, #14304a);
+  border:1px solid #14304a; position:relative; box-shadow:inset 0 1px 0 rgba(255,255,255,.18), inset 0 -2px 0 rgba(0,0,0,.4);
+}
+.w-catfu .knob::after{content:""; position:absolute; left:50%; top:5px; width:2px; height:15px; background:var(--cf-screen); transform:translateX(-50%); box-shadow:0 0 5px var(--cf-screen);}
+.w-catfu .lbl{font-size:8px; text-transform:uppercase; letter-spacing:.14em; color:#909089; user-select:none;}
+.w-catfu .seq{background:#0c0d0f; border:1px solid var(--cf-line2); padding:6px; display:grid; grid-template-columns:repeat(16,1fr); gap:3px;}
+.w-catfu .seq i{aspect-ratio:1; background:#15171a; border:1px solid #232427;}
+.w-catfu .seq i.on{background:var(--cf-screen); border-color:#9fd4ff; box-shadow:0 0 5px rgba(107,182,245,.6);}
+.w-catfu .vu{display:flex; gap:2px; align-items:flex-end; height:14px;}
+.w-catfu .vu i{flex:1; background:#202022;}
+.w-catfu .vu i.g{background:var(--cf-green);} .w-catfu .vu i.b{background:var(--cf-screen);} .w-catfu .vu i.a{background:var(--cf-amber);}
+.w-catfu .cf-foot{display:flex; align-items:center; gap:10px; margin-top:auto;}
+@keyframes cf-blink{0%,100%{opacity:1;} 50%{opacity:.12;}}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SPECIMEN 02 — cyberdeck (deep-space telemetry).
+   ═══════════════════════════════════════════════════════════════════ */
+.w-cyber{
+  --cy-bg:#07091a; --cy-bg1:#0c1226; --cy-bg2:#111930; --cy-border:#1c2d4a;
+  --cy-t1:#e8eeff; --cy-t2:#8ba3c5; --cy-t3:#7a93b4;
+  --cy-sky:#38bdf8; --cy-green:#34d399; --cy-amber:#fbbf24; --cy-rose:#fb7185; --cy-purple:#a78bfa;
+  position:relative; background:var(--cy-bg);
+  font-family:"Outfit",sans-serif; color:var(--cy-t1);
+  padding:16px 18px; display:flex; gap:16px; align-items:center;
+}
+.w-cyber::before{content:""; position:absolute; inset:0; background:radial-gradient(120% 90% at 80% -10%, rgba(56,189,248,.12) 0%, transparent 55%); pointer-events:none;}
+.w-cyber .cy-l{position:relative; z-index:1; flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:9px;}
+.w-cyber .gauge{position:relative; width:118px; height:118px;}
+.w-cyber .gauge svg{transform:rotate(-90deg);}
+.w-cyber .gauge .arc{transition:stroke-dashoffset 1.1s cubic-bezier(.16,1,.3,1);}
+.w-cyber .gauge .ctr{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+.w-cyber .gauge .ctr .s{font-size:34px; font-weight:700; line-height:1; font-variant-numeric:tabular-nums;}
+.w-cyber .gauge .ctr .o{font-size:11px; color:var(--cy-t3); margin-top:1px;}
+.w-cyber .pill{font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--cy-green); background:rgba(52,211,153,.12); border:1px solid var(--cy-green); padding:3px 9px; border-radius:100px;}
+.w-cyber .cy-r{position:relative; z-index:1; flex:1; min-width:0; display:flex; flex-direction:column; gap:9px;}
+.w-cyber .tick{font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--cy-t2); display:flex; align-items:center; gap:7px;}
+.w-cyber .tick::before{content:""; width:3px; height:13px; border-radius:2px; background:var(--cy-sky);}
+.w-cyber .chip{font-family:"JetBrains Mono",monospace; font-size:10.5px; color:var(--cy-sky); background:var(--cy-bg1); border:1px solid var(--cy-border); border-radius:5px; padding:3px 7px; align-self:flex-start;}
+.w-cyber .bar{display:grid; grid-template-columns:54px 1fr 34px; align-items:center; gap:9px; font-size:11px; color:var(--cy-t2);}
+.w-cyber .bar .track{height:6px; border-radius:4px; background:var(--cy-bg1); overflow:hidden;}
+.w-cyber .bar .fill{height:100%; width:0; border-radius:4px; transition:width 1.1s cubic-bezier(.16,1,.3,1);}
+.w-cyber .bar .val{text-align:right; font-variant-numeric:tabular-nums; color:var(--cy-t1); font-weight:600;}
+.w-cyber .sev{display:flex; gap:6px;}
+.w-cyber .sev b{font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; padding:2px 7px; border-radius:100px;}
+.w-cyber .sev .hi{color:var(--cy-rose); background:rgba(251,113,133,.12); border:1px solid var(--cy-rose);}
+.w-cyber .sev .me{color:var(--cy-amber); background:rgba(251,191,36,.12); border:1px solid var(--cy-amber);}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SPECIMEN 03 — meridian / Celestine (descending into the dark).
+   ═══════════════════════════════════════════════════════════════════ */
+.w-merid{
+  --me-ink:#060a12; --me-accent:#8fbfe6; --me-soft:#c2e0f5; --me-cream:#eaf1f8;
+  --me-muted:rgba(234,241,248,.56); --me-line:rgba(234,241,248,.10);
+  position:relative; overflow:hidden;
+  background:
+    radial-gradient(140% 90% at 78% -10%, rgba(143,191,230,.18) 0%, transparent 44%),
+    radial-gradient(120% 80% at 12% 8%, rgba(95,168,196,.20) 0%, transparent 48%),
+    radial-gradient(100% 120% at 50% 122%, rgba(124,143,212,.16) 0%, transparent 52%),
+    linear-gradient(178deg, #0a1424 0%, var(--me-ink) 44%, #030610 100%);
+  color:var(--me-cream); padding:20px 22px;
+}
+.w-merid .stars{position:absolute; inset:0; pointer-events:none;
+  background-image:
+    radial-gradient(1px 1px at 14% 22%, rgba(234,241,248,.9), transparent),
+    radial-gradient(1px 1px at 33% 64%, rgba(190,210,235,.8), transparent),
+    radial-gradient(1.4px 1.4px at 52% 18%, rgba(143,191,230,.9), transparent),
+    radial-gradient(1px 1px at 68% 48%, rgba(234,241,248,.7), transparent),
+    radial-gradient(1px 1px at 84% 30%, rgba(190,210,235,.8), transparent),
+    radial-gradient(1px 1px at 24% 82%, rgba(234,241,248,.6), transparent),
+    radial-gradient(1.2px 1.2px at 60% 78%, rgba(143,191,230,.7), transparent),
+    radial-gradient(1px 1px at 90% 70%, rgba(234,241,248,.7), transparent);
+}
+.w-merid .twinkle{animation:me-tw 4s ease-in-out infinite;}
+.w-merid .mline{position:absolute; left:50%; top:0; width:1px; height:100%;
+  background:linear-gradient(to bottom, transparent, rgba(143,191,230,.5) 38%, var(--me-accent) 55%, transparent);
+  box-shadow:0 0 14px rgba(143,191,230,.5); animation:me-breathe 6s ease-in-out infinite;}
+.w-merid .moon{position:absolute; top:-14px; right:-10px; width:96px; height:96px; border-radius:50%;
+  background:radial-gradient(circle at 36% 32%, #f4f9ff, #d4e4f2 40%, #a0bcd6 66%, #6f8aa8 100%);
+  box-shadow:inset -10px -8px 22px rgba(15,35,60,.55), 0 0 40px -6px rgba(143,191,230,.5);
+  animation:me-float 14s ease-in-out infinite;}
+.w-merid .me-content{position:relative; z-index:1; max-width:24ch; height:100%; display:flex; flex-direction:column; justify-content:center;}
+.w-merid .me-eye{font-family:"Spline Sans Mono",monospace; font-size:9.5px; text-transform:uppercase; letter-spacing:.30em; color:var(--me-accent); display:flex; align-items:center; gap:.7em;}
+.w-merid .me-eye::before{content:""; width:22px; height:1px; background:var(--me-accent); opacity:.6;}
+.w-merid h4{font-family:"Fraunces",serif; font-weight:330; font-size:clamp(1.7rem,4.3vw,2.4rem); line-height:1.02; letter-spacing:-.01em; margin:.7rem 0 0;}
+.w-merid h4 em{font-style:italic; color:var(--me-soft);}
+.w-merid .me-sub{margin:.6rem 0 0; font-family:"Spline Sans",sans-serif; font-weight:300; font-size:12.5px; color:var(--me-muted); line-height:1.55;}
+.w-merid .me-coord{position:absolute; left:22px; bottom:14px; z-index:1; font-family:"Spline Sans Mono",monospace; font-size:8.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--me-muted);}
+@keyframes me-breathe{0%,100%{opacity:.5;} 50%{opacity:.95;}}
+@keyframes me-float{0%,100%{transform:translateY(0);} 50%{transform:translateY(-14px);}}
+@keyframes me-tw{0%,100%{opacity:1;} 50%{opacity:.55;}}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SPECIMEN 04 — quiet-gilt (the heirloom ledger).
+   ═══════════════════════════════════════════════════════════════════ */
+.w-gilt{
+  --qg-bg:#0a0b0d; --qg-surface:#15181d; --qg-border:#262b34;
+  --qg-text:#f4f3f0; --qg-text2:#b9bcc4; --qg-text3:#7e8390;
+  --qg-gold:#d4b87a; --qg-good:#5ed6a4; --qg-amber:#f0b955;
+  background:var(--qg-bg); color:var(--qg-text);
+  font-family:"Hanken Grotesk",sans-serif; padding:20px 22px;
+  display:flex; flex-direction:column; justify-content:center; gap:14px;
+}
+.w-gilt .hero-line{
+  background:var(--qg-surface); border:1px solid var(--qg-border); border-left:3px solid var(--qg-gold);
+  border-radius:14px; padding:16px 20px;
+}
+.w-gilt .qg-eye{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.14em; color:var(--qg-gold);}
+.w-gilt .qg-num{font-family:"Newsreader",serif; font-weight:500; font-size:clamp(2rem,5vw,2.7rem); line-height:1.15; font-variant-numeric:tabular-nums; margin:.25rem 0 .15rem;}
+.w-gilt .qg-ctx{font-size:12.5px; color:var(--qg-text2);}
+.w-gilt .qg-chips{display:flex; gap:18px; margin-top:11px;}
+.w-gilt .qg-chips div{display:flex; flex-direction:column; gap:2px;}
+.w-gilt .qg-chips .k{font-size:9.5px; text-transform:uppercase; letter-spacing:.1em; color:var(--qg-text3);}
+.w-gilt .qg-chips .v{font-size:13px; font-weight:700; font-variant-numeric:tabular-nums;}
+.w-gilt .qg-chips .v.good{color:var(--qg-good);}
+.w-gilt .spark{display:flex; align-items:flex-end; gap:4px; height:30px; padding-left:2px;}
+.w-gilt .spark i{flex:1; background:var(--qg-gold); opacity:.85; border-radius:1px 1px 0 0;}
+.w-gilt .spark i:last-child{background:var(--qg-good); opacity:1;}
+
+/* ════════ FOOTER ════════ */
+.site-foot{border-top:1px solid var(--border); padding-block:clamp(2.5rem,6vh,4rem);}
+.site-foot .wrap{display:flex; flex-wrap:wrap; gap:28px 48px; align-items:flex-start; justify-content:space-between;}
+.colophon{max-width:46ch;}
+.colophon .mark{font-family:"Instrument Serif",serif; font-size:30px; letter-spacing:.01em;}
+.colophon p{margin:.6rem 0 0; color:var(--text-2); font-size:13px;}
+.colophon a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .2s;}
+.colophon a:hover{border-color:var(--accent);}
+.foot-meta{font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--text-3); text-align:right; line-height:2;}
+
+/* ════════ RESPONSIVE ════════ */
+@media (max-width:860px){
+  .nav-links{display:none;}
+  .facts{grid-template-columns:repeat(2,1fr);}
+  .facts > div:nth-child(3){border-left:none;}
+  .facts > div:nth-child(odd){border-left:none;}
+  .facts > div:nth-child(n+3){border-top:1px solid var(--border);}
+}
+@media (max-width:760px){
+  .specimens{grid-template-columns:1fr;}
+}
+@media (max-width:480px){
+  .facts{grid-template-columns:1fr;}
+  .facts > div{border-left:none; border-top:1px solid var(--border);}
+  .facts > div:first-child{border-top:none;}
+  .foot-meta{text-align:left;}
+}
+
+/* ════════ MOTION SAFETY ════════ */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important; transition:none !important;}
+  .spec{opacity:1; transform:none;}
+}
+
+/* ════════ PRINT ════════ */
+@media print{
+  .site-head,.toggle,.open{display:none !important;}
+  body{background:#fff; color:#111;}
+  .spec{break-inside:avoid; border:1px solid #ccc;}
+}
+</style>
+</head>
+
+<body>
+<a class="skip" href="#archive">Skip to the archive</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Frontend Styles — home">
+      <span class="mark">Frontend&nbsp;<em>Styles</em></span>
+      <span class="sub">specimen archive</span>
+    </a>
+    <nav class="nav-links" aria-label="Jump to a language">
+      <a href="#catfu">catfu</a>
+      <a href="#cyberdeck">cyberdeck</a>
+      <a href="#meridian">meridian</a>
+      <a href="#quiet-gilt">quiet-gilt</a>
+    </nav>
+    <button class="toggle" id="themeToggle" type="button" role="switch" aria-checked="false" aria-label="Toggle light and dark theme">
+      <span class="ic moon" aria-hidden="true">☾</span>
+      <span class="ic sun" aria-hidden="true">☀</span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <!-- ════════ HERO — lead with the answer ════════ -->
+  <section class="hero">
+    <div class="wrap">
+      <span class="crop tl"></span><span class="crop tr"></span>
+      <span class="crop bl"></span><span class="crop br"></span>
+      <p class="eyebrow">A curated collection of design languages</p>
+      <h1>Four design&nbsp;languages,<br><em>carefully made.</em></h1>
+      <p class="lede">
+        A small, self-contained collection. Each language commits to a single idea and
+        follows it without compromise — <b>a considered palette</b>, <b>a confident
+        typographic voice</b>, and the restraint to leave everything else out. Open one
+        to see it in full.
+      </p>
+
+      <div class="facts" role="list" aria-label="The collection at a glance">
+        <div role="listitem"><div class="v tnum">04</div><div class="k">Design languages</div></div>
+        <div role="listitem"><div class="v tnum">01</div><div class="k">Accent colour, each</div></div>
+        <div role="listitem"><div class="v tnum">2–3 <small>each</small></div><div class="k">Typefaces per system</div></div>
+        <div role="listitem"><div class="v tnum">0</div><div class="k">Frameworks · hand-built</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ THE FOUR PLATES ════════ -->
+  <section class="specimens-sec" id="archive">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">The collection</p>
+          <h2>Specimen plates, 01–04</h2>
+        </div>
+        <p>Each plate is a faithful, living miniature rendered in its own palette, fonts,
+           and signature motif. Open one to step inside the full language.</p>
+      </div>
+
+      <div class="specimens">
+
+        <!-- ── 01 · catfu ─────────────────────────────────────────── -->
+        <article class="spec" id="catfu">
+          <a class="spec-link" href="./catfu/index.html" aria-label="Open catfu — cassette-futurism">
+          <div class="spec-top">
+            <div class="spec-no tnum">01</div>
+            <div class="spec-id">
+              <h3>catfu</h3>
+              <p class="concept">cassette-futurism — a machined instrument panel</p>
+            </div>
+          </div>
+
+          <div class="window w-catfu" aria-hidden="true">
+            <div class="cf-bar">
+              <span class="led on"></span><span class="led rec"></span>
+              <span class="cf-name">cm-1 · field sampler</span>
+              <span class="cf-mode">rec</span>
+            </div>
+            <div class="cf-mid">
+              <div class="lcd">
+                <span class="tag">tempo · lock</span>
+                <span class="val tnum">120.0<small>bpm</small></span>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                <span class="knob"></span><span class="lbl">gain</span>
+              </div>
+            </div>
+            <div class="seq" aria-hidden="true">
+              <i class="on"></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i>
+              <i class="on"></i><i></i><i class="on"></i><i></i><i class="on"></i><i></i><i></i><i></i>
+            </div>
+            <div class="cf-foot">
+              <span class="lbl">vu</span>
+              <div class="vu">
+                <i class="g"></i><i class="g"></i><i class="g"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="a"></i><i></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="spec-meta">
+            <div class="swatches" role="img" aria-label="catfu palette: panel, chassis blue, cobalt, screen blue, amber, green">
+              <span style="background:#121316"></span><span style="background:#235594"></span>
+              <span style="background:#2e7dc4"></span><span style="background:#6bb6f5"></span>
+              <span style="background:#ff6a00"></span><span style="background:#36e27b"></span>
+            </div>
+            <div class="metarow">
+              <span>Type · <b>Archivo Expanded · IBM&nbsp;Plex&nbsp;Mono · Press&nbsp;Start&nbsp;2P</b></span>
+            </div>
+          </div>
+          <div class="spec-foot">
+            <span class="tag">Motif · CSS-rendered cobalt instrument</span>
+            <span class="open">Open <span class="ar" aria-hidden="true">↗</span></span>
+          </div>
+          </a>
+        </article>
+
+        <!-- ── 02 · cyberdeck ─────────────────────────────────────── -->
+        <article class="spec" id="cyberdeck">
+          <a class="spec-link" href="./cyberdeck/index.html" aria-label="Open cyberdeck — deep-space telemetry">
+          <div class="spec-top">
+            <div class="spec-no tnum">02</div>
+            <div class="spec-id">
+              <h3>cyberdeck</h3>
+              <p class="concept">deep-space telemetry — a calm instrument deck</p>
+            </div>
+          </div>
+
+          <div class="window w-cyber" aria-hidden="true">
+            <div class="cy-l">
+              <div class="gauge">
+                <svg viewBox="0 0 120 120" width="118" height="118">
+                  <circle cx="60" cy="60" r="52" fill="none" stroke="#0c1226" stroke-width="12"/>
+                  <circle class="arc" cx="60" cy="60" r="52" fill="none" stroke="#34d399" stroke-width="12"
+                          stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7"
+                          data-offset="52.3"/>
+                </svg>
+                <div class="ctr"><span class="s tnum">84</span><span class="o tnum">/ 100</span></div>
+              </div>
+              <span class="pill">Good</span>
+            </div>
+            <div class="cy-r">
+              <span class="tick">System integrity</span>
+              <span class="chip">/vol1/photos</span>
+              <div class="bar"><span>Coverage</span><span class="track"><span class="fill" style="background:#34d399" data-w="92%"></span></span><span class="val tnum">92%</span></div>
+              <div class="bar"><span>Drift</span><span class="track"><span class="fill" style="background:#fbbf24" data-w="18%"></span></span><span class="val tnum">18%</span></div>
+              <div class="sev"><b class="hi">⚠ High 2</b><b class="me">● Med 5</b></div>
+            </div>
+          </div>
+
+          <div class="spec-meta">
+            <div class="swatches" role="img" aria-label="cyberdeck palette: navy, sky, violet, green, amber, rose">
+              <span style="background:#07091a"></span><span style="background:#38bdf8"></span>
+              <span style="background:#a78bfa"></span><span style="background:#34d399"></span>
+              <span style="background:#fbbf24"></span><span style="background:#fb7185"></span>
+            </div>
+            <div class="metarow">
+              <span>Type · <b>Outfit · JetBrains&nbsp;Mono</b></span>
+            </div>
+          </div>
+          <div class="spec-foot">
+            <span class="tag">Motif · donut gauge + earned glow</span>
+            <span class="open">Open <span class="ar" aria-hidden="true">↗</span></span>
+          </div>
+          </a>
+        </article>
+
+        <!-- ── 03 · meridian ──────────────────────────────────────── -->
+        <article class="spec" id="meridian">
+          <a class="spec-link" href="./meridian/index.html" aria-label="Open meridian — Celestine, cinematic dark-luxury">
+          <div class="spec-top">
+            <div class="spec-no tnum">03</div>
+            <div class="spec-id">
+              <h3>meridian <span style="color:var(--text-3);font-weight:400;font-size:13px;">· Celestine</span></h3>
+              <p class="concept">descending into the dark — cinematic dark-luxury</p>
+            </div>
+          </div>
+
+          <div class="window w-merid" aria-hidden="true">
+            <div class="stars"></div>
+            <div class="stars twinkle" style="background-image:radial-gradient(1.4px 1.4px at 44% 40%, rgba(143,191,230,.95), transparent),radial-gradient(1px 1px at 76% 56%, rgba(234,241,248,.9), transparent);"></div>
+            <div class="moon"></div>
+            <div class="mline"></div>
+            <div class="me-content">
+              <span class="me-eye">Private observatory</span>
+              <h4>Descend into the <em>dark.</em></h4>
+              <p class="me-sub">A glacial winter sky. One glowing meridian line, a living starfield, quiet awe.</p>
+            </div>
+            <span class="me-coord">47.6° N · 121.9° W</span>
+          </div>
+
+          <div class="spec-meta">
+            <div class="swatches" role="img" aria-label="meridian palette: ink, indigo, ice-blue accent, accent soft, periwinkle, glacial cyan">
+              <span style="background:#060a12"></span><span style="background:#0f1c30"></span>
+              <span style="background:#8fbfe6"></span><span style="background:#c2e0f5"></span>
+              <span style="background:#7c8fd4"></span><span style="background:#5fa8c4"></span>
+            </div>
+            <div class="metarow">
+              <span>Type · <b>Fraunces · Spline&nbsp;Sans · Spline&nbsp;Sans&nbsp;Mono</b></span>
+              <span><b>Dark always</b></span>
+            </div>
+          </div>
+          <div class="spec-foot">
+            <span class="tag">Motif · meridian line + living starfield</span>
+            <span class="open">Open <span class="ar" aria-hidden="true">↗</span></span>
+          </div>
+          </a>
+        </article>
+
+        <!-- ── 04 · quiet-gilt ────────────────────────────────────── -->
+        <article class="spec" id="quiet-gilt">
+          <a class="spec-link" href="./quiet-gilt/index.html" aria-label="Open quiet-gilt — the heirloom ledger">
+          <div class="spec-top">
+            <div class="spec-no tnum">04</div>
+            <div class="spec-id">
+              <h3>quiet-gilt</h3>
+              <p class="concept">the heirloom ledger — calm, confident, quiet</p>
+            </div>
+          </div>
+
+          <div class="window w-gilt" aria-hidden="true">
+            <div class="hero-line">
+              <div class="qg-eye">Lifetime tax savings</div>
+              <div class="qg-num tnum">$184,000</div>
+              <div class="qg-ctx">across a 30-year Roth conversion ladder</div>
+              <div class="qg-chips">
+                <div><span class="k">Federal</span><span class="v good tnum">+$142K</span></div>
+                <div><span class="k">State</span><span class="v tnum">$42K</span></div>
+              </div>
+            </div>
+            <div class="spark" aria-hidden="true">
+              <i style="height:32%"></i><i style="height:44%"></i><i style="height:40%"></i>
+              <i style="height:58%"></i><i style="height:66%"></i><i style="height:60%"></i>
+              <i style="height:78%"></i><i style="height:88%"></i><i style="height:100%"></i>
+            </div>
+          </div>
+
+          <div class="spec-meta">
+            <div class="swatches" role="img" aria-label="quiet-gilt palette: warm black, gold, sage, amber, clay, plum">
+              <span style="background:#0a0b0d"></span><span style="background:#d4b87a"></span>
+              <span style="background:#5ed6a4"></span><span style="background:#f0b955"></span>
+              <span style="background:#c98a6b"></span><span style="background:#b08bc9"></span>
+            </div>
+            <div class="metarow">
+              <span>Type · <b>Newsreader · Hanken&nbsp;Grotesk</b></span>
+              <span><b>No monospace</b></span>
+            </div>
+          </div>
+          <div class="spec-foot">
+            <span class="tag">Motif · gold rule + serif answer-number</span>
+            <span class="open">Open <span class="ar" aria-hidden="true">↗</span></span>
+          </div>
+          </a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="colophon">
+      <div class="mark">Frontend&nbsp;Styles</div>
+      <p>A study in restraint. Each language here is dark by default, built from a single
+         self-contained file, and committed to one idea. The gallery itself stays
+         colourless on purpose — so the work can speak.</p>
+    </div>
+    <div class="foot-meta">
+      Four languages<br>
+      Dark by default<br>
+      Hand-built · no dependencies
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var toggle = document.getElementById("themeToggle");
+
+  function sync() {
+    var dark = root.getAttribute("data-theme") === "dark";
+    toggle.setAttribute("aria-checked", String(!dark)); // checked = light
+  }
+  sync();
+
+  toggle.addEventListener("click", function () {
+    var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("fs-gallery-theme", next); } catch (e) {}
+    sync();
+  });
+
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // One-time staggered reveal + kick the live fills/arcs once on entry.
+  var plates = Array.prototype.slice.call(document.querySelectorAll(".spec"));
+  function activate(el) {
+    el.classList.add("in");
+    el.querySelectorAll(".w-cyber .fill").forEach(function (f) { f.style.width = f.dataset.w; });
+    el.querySelectorAll(".w-cyber .arc").forEach(function (a) { a.style.strokeDashoffset = a.dataset.offset; });
+  }
+
+  if (reduce || !("IntersectionObserver" in window)) {
+    plates.forEach(activate);
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var el = en.target;
+        el.style.transitionDelay = (plates.indexOf(el) % 2) * 90 + "ms";
+        activate(el);
+        io.unobserve(el);
+      });
+    }, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
+    plates.forEach(function (p) { io.observe(p); });
+  }
+})();
+</script>
+</body>
+</html>
