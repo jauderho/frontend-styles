@@ -174,11 +174,14 @@ nav.shrink{
 .chip .v{ font-size:1.05rem; font-weight:700; color:var(--text); }
 .chip .v.good{ color:var(--good); }
 
-/* slot reels (§6) */
-.reel{ display:inline-block; height:1em; overflow:hidden; vertical-align:baseline; }
+/* slot reels (§6) — every glyph (reel digits + static chars) shares line-height:1
+   so the rolling digit rests on the exact baseline of the $ . B characters. */
+.reel{ display:inline-block; height:1em; overflow:hidden; vertical-align:baseline; line-height:1; }
 .reel .strip{ display:flex; flex-direction:column; will-change:transform; }
-.reel .digit{ height:1em; line-height:1; display:flex; align-items:center; }
-.slot .static{ display:inline-block; }
+/* digits render in a normal 1em line box (NOT flex-centered) so the rolling
+   digit shares the exact text baseline of the static $ . B characters. */
+.reel .digit{ height:1em; line-height:1; display:block; text-align:center; }
+.slot .static{ display:inline-block; line-height:1; }
 
 /* credential band */
 .band{ border-block:1px solid var(--border); }
@@ -681,11 +684,18 @@ footer{ border-top:1px solid var(--border); padding:3.4rem 0 2.6rem; }
     var reels = el.querySelectorAll('.reel');
     reels.forEach(function(reel, idx){
       var target = +reel.dataset.target;
-      // Collapse the spinning reel to a plain static digit so its final rest
-      // is pixel-identical to the static characters — never between boundaries.
-      function settle(){ reel.textContent = target; }
-      if(reduce){ settle(); return; }
       var strip = reel.querySelector('.strip');
+      // Collapse the spinning strip to a single, identically-styled .digit cell.
+      // Reusing the same box model as the final animation frame keeps the rest
+      // state pixel-identical to that frame — so the roll ends without a jump.
+      function settle(){
+        strip.style.transform = 'none';
+        strip.textContent = '';
+        var d = document.createElement('span');
+        d.className = 'digit'; d.textContent = target;
+        strip.appendChild(d);
+      }
+      if(reduce){ settle(); return; }
       var h = reel.querySelector('.digit').getBoundingClientRect().height;
       var loops = 4 + (idx % 2);
       var finalY = -((loops*10 + target) * h);
@@ -693,7 +703,9 @@ footer{ border-top:1px solid var(--border); padding:3.4rem 0 2.6rem; }
         [{transform:'translateY(0)'},{transform:'translateY(' + finalY + 'px)'}],
         {duration: 920 + idx*130 + Math.random()*160, easing: SPRING, fill:'forwards'}
       );
-      anim.onfinish = settle;
+      // Cancel the forwards-fill before swapping content, then drop in the single
+      // resting digit in the same tick (no paint in between) to avoid any flicker.
+      anim.onfinish = function(){ anim.cancel(); settle(); };
     });
   }
   var heroNum = document.getElementById('heroNum');
