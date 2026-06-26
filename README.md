@@ -23,7 +23,7 @@ honored, and no chart libraries — every data visualization is hand-built CSS/S
 
 ---
 
-## The four designs
+## Design Language
 
 ### catfu — cassette-futurism
 
@@ -35,11 +35,6 @@ The discipline is total — **zero border-radius** on structure (enclosures are
 machined, not molded), **no drop shadows or gradient fills** (matte polycarbonate
 and phosphor screens have neither), and **mechanical motion only** (`steps()`
 easing, 50–80ms snaps, blink as the primary animation — never an eased curve).
-
-Two material layers define it: the **chassis** (page chrome) is matte and themeable,
-while the **screens** (LCD, CRT, sequencer) stay dark and lit in both themes. Body
-copy is lowercase by default; UPPERCASE is reserved for 3–4-character silk-screen
-hardware labels (`rec`, `play`, `clr`).
 
 | | |
 |---|---|
@@ -61,12 +56,6 @@ identity is a strict **two-voice type split**: a humanist sans (Outfit) carries
 everything operational, while a monospace (JetBrains Mono) is reserved for anything
 *literal* — file paths, IDs, destinations, commands, code.
 
-Color is layered with intent: one **structural** accent (sky/cyan) owns chrome,
-focus, and links, while a disciplined multi-hue set (green/amber/rose/violet/
-teal/orange) carries *meaning* — severity, category, status — never decoration. The
-"cyber" is earned by a single sky→violet logo gradient, frosted-blur header, and a
-faint ambient glow; everything else stays flat and quiet.
-
 | | |
 |---|---|
 | **Accent** | Sky/cyan `#38bdf8` (structural) + a semantic spectrum |
@@ -85,13 +74,6 @@ Built around a single idea: **descending into the dark.** The canonical *Celesti
 palette is a glacial, near-monochrome winter night — deep slate-blue grounds, a cold
 ice-blue accent, moonlit white type. The emotional target is **quiet awe**: standing
 under a sky dark enough that the Milky Way is loud.
-
-One conceptual motif, executed precisely — a glowing vertical *meridian line* over a
-living starfield; everything else defers to it. The accent is **rationed** (under ~8%
-of the surface), never a field. Backgrounds are layered radial gradients plus grain,
-never a flat fill. A display serif carries the voice; monospace carries the
-instrumentation (coordinates, eyebrows, metrics). Motion is slow and orchestrated —
-one staggered page-load, gentle scroll reveals, ambient drift. Nothing bounces.
 
 | | |
 |---|---|
@@ -113,13 +95,6 @@ meaning, never decoration. Typography does the work: Newsreader serif gives head
 and hero numbers their voice, Hanken Grotesk carries the UI, and hierarchy comes from
 size, weight, and whitespace rather than boxes and borders. **No monospace anywhere** —
 aligned numbers use tabular figures on the sans face.
-
-Two principles govern the layout: data follows Tufte (maximize data-ink, label
-directly, keep grids quiet), chrome follows Apple HCI (generous touch targets,
-content-first hierarchy). Every screen **leads with the answer** — one dominant number
-that answers the user's core question, with tables and charts in support. The
-reference page includes a slot-machine hero number that rolls into place on a single
-shared baseline.
 
 | | |
 |---|---|
